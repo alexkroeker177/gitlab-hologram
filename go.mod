@@ -1,4 +1,4 @@
-module hgm-blank
+module blank-sparkable
 
 go 1.20
 
