@@ -1,9 +1,9 @@
-# BlankSparkable
+# Blank Sparkable
 
-URL: [bitspark.studio/sparkable/blankDomain.blankSparkable](https://bitspark.studio/sparkable/blankDomain.blankSparkable)
+URL: [bitspark.studio/sparkable/blankDomain.personioAccount](https://bitspark.studio/sparkable/blankDomain.personioAccount)
 
-A sparkable in the domain [blankDomain](https://bitspark.studio/domain/blankDomain).
+A sparkable in the domain [blankDomain](https://bitspark.studio/domain/fullBlankDomain).
 
 ## Description
 
-@@BITNODE_DESCRIPTION@@
+@@SPARKABLE_DESCRIPTION@@

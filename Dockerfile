@@ -15,7 +15,7 @@ COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 
 COPY . .
-RUN go build -o bitnode ./hgm/
+RUN go build -o bitnode ./cmd/docker/
 
 ENV BITNODE_LOCAL_PORT=9060
 ENV BITNODE_LOCAL_ADDRESS=0.0.0.0:${BITNODE_LOCAL_PORT}

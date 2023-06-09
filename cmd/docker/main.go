@@ -1,6 +1,7 @@
 package main
 
 import (
+	asapp "blank-sparkable/app"
 	"context"
 	"github.com/Bitspark/go-bitnode/api/wsApi"
 	"github.com/Bitspark/go-bitnode/bitnode"
@@ -18,22 +19,29 @@ func main() {
 	remoteNodeAddress := os.Getenv("BITNODE_REMOTE_ADDRESS")
 
 	node := bitnode.NewNode()
-	dom := bitnode.NewDomain()
 	node.AddMiddlewares(library.GetMiddlewares())
+
+	dom := bitnode.NewDomain()
+	dom, _ = dom.AddDomain("hub")
 
 	// Prepare node connections.
 	nodeConns := wsApi.NewNodeConns(node, remoteNodeAddress)
 
 	// Prepare node.
-	localDom, err := dom.AddDomain("local")
+	localDom, err := dom.AddDomain("asapp")
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := localDom.LoadFromFile("./local.yml"); err != nil {
+	if err := localDom.LoadFromFile("./asapp/domain.yml"); err != nil {
 		log.Fatal(err)
 	}
 	if err := localDom.Compile(); err != nil {
 		log.Fatal(err)
+	}
+
+	asappDom := &asapp.Domain{
+		Domain: dom,
+		Node:   node,
 	}
 
 	// Read store.
@@ -51,33 +59,30 @@ func main() {
 
 	creds := bitnode.Credentials{}
 
+	var acc *asapp.BlankSparkable
+
 	if len(node.Systems(creds)) == 0 {
-		// Create BlankSparkable system.
-		spb, err := dom.GetSparkable("local.BlankSparkable")
-		if err != nil {
-			log.Fatal(err)
-		}
-		sys, err := node.PrepareSystem(bitnode.Credentials{}, *spb)
+		var err error
+		acc, err = asappDom.NewPersonioAccount()
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		// Make computer system the root system.
-		node.SetSystem(sys.Native())
+		node.SetSystem(acc.Native())
 	} else {
 		log.Printf("Found %d startup systems", len(node.Systems(creds)))
-	}
 
-	// Get the system from the node.
-	sys := node.System(creds)
+		// Get the system from the node.
+		accSys := node.System(creds)
 
-	// Create an instance for the sparkable.
-	s := &BlankSparkable{
-		System: sys,
+		acc = &asapp.BlankSparkable{
+			System: accSys,
+		}
 	}
 
 	// Add the custom BlankSparkable implementation.
-	if err := s.init(); err != nil {
+	if err := acc.Init(); err != nil {
 		log.Fatal(err)
 	}
 
@@ -90,16 +95,16 @@ func main() {
 		log.Println(server.Listen())
 
 		// Create store.
-		st2 := store.NewStore("store")
+		st := store.NewStore("store")
 
 		// Store node.
-		if err := nodeConns.Store(st2); err != nil {
+		if err := nodeConns.Store(st); err != nil {
 			stored <- err
 			return
 		}
 
 		// Write node store.
-		if err := st2.Write("."); err != nil {
+		if err := st.Write("."); err != nil {
 			log.Println(err)
 			stored <- err
 			return
