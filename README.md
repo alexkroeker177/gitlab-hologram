@@ -7,3 +7,13 @@ A sparkable in the domain [blankDomain](https://bitspark.studio/domain/fullBlank
 ## Description
 
 @@SPARKABLE_DESCRIPTION@@
+
+## Development
+
+### Implement stubs
+
+To implement your sparkable, implement the stubs in [app/blank_sparkable.go](app/blank_sparkable.go).
+
+### Test your implementation
+
+TODO...
