@@ -1,4 +1,4 @@
-# Blank Sparkable
+# BlankSparkable
 
 URL: [bitspark.studio/sparkable/fullBlankDomain.BlankSparkable](https://bitspark.studio/sparkable/fullBlankDomain.BlankSparkable)
 
