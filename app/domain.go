@@ -26,6 +26,9 @@ func (blankDomain *Domain) NewBlankSparkable() (*BlankSparkable, error) {
 		log.Fatal(err)
 	}
 
+	// Remove docker implementation.
+	delete(blankSblSpark.Implementation, "docker")
+
 	// Prepare the BlankSparkable spark.
 	blankSblSpk, err := blankDomain.Node.PrepareSystem(bitnode.Credentials{}, *blankSblSpark)
 	if err != nil {
