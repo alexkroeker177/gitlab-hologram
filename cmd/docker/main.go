@@ -1,7 +1,7 @@
 package main
 
 import (
-	asapp "blank-sparkable/app"
+	"blank-sparkable/app"
 	"context"
 	"github.com/Bitspark/go-bitnode/api/wsApi"
 	"github.com/Bitspark/go-bitnode/bitnode"
@@ -28,18 +28,14 @@ func main() {
 	nodeConns := wsApi.NewNodeConns(node, remoteNodeAddress)
 
 	// Prepare node.
-	localDom, err := dom.AddDomain("asapp")
-	if err != nil {
+	if err := dom.LoadFromDir("./domain", true); err != nil {
 		log.Fatal(err)
 	}
-	if err := localDom.LoadFromFile("./asapp/domain.yml"); err != nil {
-		log.Fatal(err)
-	}
-	if err := localDom.Compile(); err != nil {
+	if err := dom.Compile(); err != nil {
 		log.Fatal(err)
 	}
 
-	blankDomain := &asapp.Domain{
+	blankDomain := &app.Domain{
 		Domain: dom,
 		Node:   node,
 	}
@@ -59,7 +55,7 @@ func main() {
 
 	creds := bitnode.Credentials{}
 
-	var blankSbl *asapp.BlankSparkable
+	var blankSbl *app.BlankSparkable
 
 	if len(node.Systems(creds)) == 0 {
 		var err error
@@ -76,7 +72,7 @@ func main() {
 		// Get the system from the node.
 		blankSblSys := node.System(creds)
 
-		blankSbl = &asapp.BlankSparkable{
+		blankSbl = &app.BlankSparkable{
 			System: blankSblSys,
 		}
 	}

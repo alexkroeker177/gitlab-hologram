@@ -1,4 +1,4 @@
-// This file contains types inside the asapp domain.
+// This file contains types inside the blankDomain domain.
 
 // Package app contains structs and implementations for this app.
 package app
@@ -19,15 +19,15 @@ type Domain struct {
 }
 
 // NewBlankSparkable creates a new BlankSparkable instance.
-func (asapp *Domain) NewBlankSparkable() (*BlankSparkable, error) {
+func (blankDomain *Domain) NewBlankSparkable() (*BlankSparkable, error) {
 	// Get the BlankSparkable sparkable from the domain.
-	blankSblSpark, err := asapp.Domain.GetSparkable("fullBlankDomain.BlankSparkable")
+	blankSblSpark, err := blankDomain.Domain.GetSparkable("fullBlankDomain.BlankSparkable")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Prepare the BlankSparkable spark.
-	blankSblSpk, err := asapp.Node.PrepareSystem(bitnode.Credentials{}, *blankSblSpark)
+	blankSblSpk, err := blankDomain.Node.PrepareSystem(bitnode.Credentials{}, *blankSblSpark)
 	if err != nil {
 		log.Fatal(err)
 	}
