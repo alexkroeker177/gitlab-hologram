@@ -39,7 +39,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	asappDom := &asapp.Domain{
+	blankDomain := &asapp.Domain{
 		Domain: dom,
 		Node:   node,
 	}
@@ -59,30 +59,30 @@ func main() {
 
 	creds := bitnode.Credentials{}
 
-	var acc *asapp.BlankSparkable
+	var blankSbl *asapp.BlankSparkable
 
 	if len(node.Systems(creds)) == 0 {
 		var err error
-		acc, err = asappDom.NewPersonioAccount()
+		blankSbl, err = blankDomain.NewBlankSparkable()
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		// Make computer system the root system.
-		node.SetSystem(acc.Native())
+		node.SetSystem(blankSbl.Native())
 	} else {
 		log.Printf("Found %d startup systems", len(node.Systems(creds)))
 
 		// Get the system from the node.
-		accSys := node.System(creds)
+		blankSblSys := node.System(creds)
 
-		acc = &asapp.BlankSparkable{
-			System: accSys,
+		blankSbl = &asapp.BlankSparkable{
+			System: blankSblSys,
 		}
 	}
 
 	// Add the custom BlankSparkable implementation.
-	if err := acc.Init(); err != nil {
+	if err := blankSbl.Init(); err != nil {
 		log.Fatal(err)
 	}
 

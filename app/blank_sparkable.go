@@ -4,7 +4,6 @@ package app
 
 import (
 	"github.com/Bitspark/go-bitnode/bitnode"
-	"net/http"
 )
 
 // Struct definition for BlankSparkable.
@@ -13,16 +12,7 @@ import (
 type BlankSparkable struct {
 	bitnode.System
 
-	// Credentials represents the credentials of the Personio account.
-	credentials Credentials
-
-	// Custom fields
-
-	// httpClient used for API calls to Personio.
-	httpClient *http.Client
-
-	// authToken for the Personio API.
-	authToken string
+	// @@SPARKABLE_FIELDS@@
 }
 
 // BlankSparkable methods.
@@ -35,13 +25,13 @@ type BlankSparkable struct {
 
 // lifecycleCreate is called when the container has been created.
 func (s *BlankSparkable) lifecycleCreate(vals ...bitnode.HubItem) error {
-	// TODO: Add startup logic here which is called when the hologram is created.
+	// TODO: Add startup logic here which is called when the spark is created.
 	return nil
 }
 
 // lifecycleLoad is called when the container has been started (after lifecycleCreate) or restarted.
 func (s *BlankSparkable) lifecycleLoad(vals ...bitnode.HubItem) error {
-	s.httpClient = &http.Client{}
+	// TODO: Add startup logic here which is called after the spark has been created.
 
 	s.SetMessage("BlankSparkable running...")
 	s.SetStatus(bitnode.SystemStatusRunning)
