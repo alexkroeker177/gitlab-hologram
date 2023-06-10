@@ -8,6 +8,7 @@ import (
 
 // Struct definition for BlankSparkable.
 
+// BlankSparkable is the main sparkable.
 // @@SPARKABLE_DESCRIPTION@@
 type BlankSparkable struct {
 	bitnode.System
