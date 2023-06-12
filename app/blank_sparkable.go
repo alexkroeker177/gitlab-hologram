@@ -3,7 +3,10 @@
 package app
 
 import (
+	"blank-sparkable/util"
+	"fmt"
 	"github.com/Bitspark/go-bitnode/bitnode"
+	"reflect"
 )
 
 // Struct definition for BlankSparkable.
@@ -41,6 +44,35 @@ func (s *BlankSparkable) lifecycleLoad(vals ...bitnode.HubItem) error {
 }
 
 // DO NOT CHANGE THE FOLLOWING CODE UNLESS YOU KNOW WHAT YOU ARE DOING.
+
+func (s *BlankSparkable) Update(values ...string) error {
+	sv := reflect.ValueOf(*s)
+	st := reflect.TypeOf(*s)
+	if len(values) == 0 {
+		for i := 0; i < st.NumField(); i++ {
+			values = append(values, st.Field(i).Name)
+		}
+	}
+	for _, value := range values {
+		ft, ok := st.FieldByName(value)
+		if !ok {
+			return fmt.Errorf("field '%s' not found in %s", value, st.Name())
+		}
+		fv := sv.FieldByName(value)
+		if !fv.IsValid() {
+			return fmt.Errorf("field '%s' not found in %s", value, st.Name())
+		}
+		val, err := util.InterfaceFromValue(fv.Interface())
+		if err != nil {
+			return err
+		}
+		hubName := ft.Tag.Get("json")
+		if err := s.GetHub(hubName).Set("", val); err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 // Init attaches the methods of the BlankSparkable to the respective handlers.
 func (s *BlankSparkable) Init() error {
