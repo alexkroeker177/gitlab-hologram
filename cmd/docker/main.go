@@ -1,12 +1,12 @@
 package main
 
 import (
-	"blank-sparkable/app"
 	"context"
 	"github.com/Bitspark/go-bitnode/api/wsApi"
 	"github.com/Bitspark/go-bitnode/bitnode"
 	"github.com/Bitspark/go-bitnode/library"
 	"github.com/Bitspark/go-bitnode/store"
+	"gitlab/app"
 	"log"
 	"os"
 	"os/signal"
@@ -35,7 +35,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	blankDomain := &app.Domain{
+	gitlab := &app.Domain{
 		Domain: dom,
 		Node:   node,
 	}
@@ -55,30 +55,30 @@ func main() {
 
 	creds := bitnode.Credentials{}
 
-	var blankSbl *app.BlankSparkable
+	var gitlab *app.Gitlab
 
 	if len(node.Systems(creds)) == 0 {
 		var err error
-		blankSbl, err = blankDomain.NewBlankSparkable()
+		gitlab, err = gitlab.NewGitlab()
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		// Make computer system the root system.
-		node.SetSystem(blankSbl.Native())
+		node.SetSystem(gitlab.Native())
 	} else {
 		log.Printf("Found %d startup systems", len(node.Systems(creds)))
 
 		// Get the system from the node.
-		blankSblSys := node.System(creds)
+		gitlabSys := node.System(creds)
 
-		blankSbl = &app.BlankSparkable{
-			System: blankSblSys,
+		gitlab = &app.Gitlab{
+			System: gitlabSys,
 		}
 	}
 
-	// Add the custom BlankSparkable implementation.
-	if err := blankSbl.Init(); err != nil {
+	// Add the custom Gitlab implementation.
+	if err := gitlab.Init(); err != nil {
 		log.Fatal(err)
 	}
 

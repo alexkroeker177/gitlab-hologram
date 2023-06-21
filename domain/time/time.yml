@@ -1,0 +1,71 @@
+name: time
+description: ""
+permissions:
+    owner: "0000000000000000000000000000"
+    admin:
+        public: false
+        auth: false
+        users: []
+        groups: []
+    extend:
+        public: false
+        auth: false
+        users: []
+        groups: []
+    view:
+        public: false
+        auth: false
+        users: []
+        groups: []
+types:
+    - name: date
+      description: A map.
+      permissions:
+        owner: 2f031e2e26bb43701e40d707ce63
+        admin:
+            public: false
+            auth: false
+            users: []
+            groups: []
+        extend:
+            public: false
+            auth: true
+            users: []
+            groups: []
+        view:
+            public: true
+            auth: true
+            users: []
+            groups: []
+      mapOf:
+        day:
+            name: day
+            description: An integer.
+            leaf: integer
+        hours:
+            name: hours
+            description: An integer.
+            leaf: integer
+        milliseconds:
+            name: milliseconds
+            description: An integer.
+            leaf: integer
+        minutes:
+            name: minutes
+            description: An integer.
+            leaf: integer
+        monthIndex:
+            name: monthIndex
+            description: An integer.
+            leaf: integer
+        seconds:
+            name: seconds
+            description: An integer.
+            leaf: integer
+        year:
+            name: year
+            description: An integer.
+            leaf: integer
+interfaces: []
+blueprints: []
+models: []

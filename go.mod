@@ -1,4 +1,4 @@
-module blank-sparkable
+module gitlab
 
 go 1.20
 
