@@ -3,9 +3,14 @@
 package app
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"github.com/Bitspark/go-bitnode/bitnode"
 	"gitlab/util"
+	"io"
+	"net/http"
+	"net/url"
 	"reflect"
 )
 
@@ -14,13 +19,70 @@ import (
 // Gitlab is the main sparkable.
 type Gitlab struct {
 	bitnode.System
+
+	httpClient *http.Client
+}
+
+func (s *Gitlab) apiCall(method string, call string, params map[string]string, reqStruct any, respStruct any) error {
+
+	var reqBody io.Reader
+	if reqStruct != nil {
+		reqBts, err := json.Marshal(reqStruct)
+		if err != nil {
+			return err
+		}
+		reqBody = bytes.NewBuffer(reqBts)
+	}
+
+	req, err := http.NewRequest(method, fmt.Sprintf("https://gitlab.bitspark.com/api/v4/%s?%s", call, encodeMapToURLString(params)), reqBody)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("PRIVATE-TOKEN", "glpat-uyLgZJobFAu6ozXosShM")
+
+	resp, err := s.httpClient.Do(req)
+	if err != nil {
+		return err
+	}
+
+	respBts, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	respStructWrapper := struct {
+		Success bool            `json:"success"`
+		Data    json.RawMessage `json:"data"`
+		Error   struct {
+			Code    int    `json:"code"`
+			Message string `json:"message"`
+		} `json:"error"`
+	}{}
+
+	if err := json.Unmarshal(respBts, &respStructWrapper); err != nil {
+		return err
+	}
+
+	if !respStructWrapper.Success {
+		return fmt.Errorf("[%d] %s", respStructWrapper.Error.Code, respStructWrapper.Error.Message)
+	}
+
+	if err := json.Unmarshal(respStructWrapper.Data, respStruct); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Gitlab methods.
 
 // ConnectGitlabInstance description: Method connectGitlabInstance of Gitlab.
-func (s *Gitlab) ConnectGitlabInstance() error {
+func (s *Gitlab) ConnectGitlabInstance(personalAccessToken string, instanceUrl string) error {
 	// TODO: Implement method.
+
 	return fmt.Errorf("method connectGitlabInstance not implemented yet")
 }
 
@@ -68,6 +130,15 @@ func (s *Gitlab) lifecycleLoad(vals ...bitnode.HubItem) error {
 
 // DO NOT CHANGE THE FOLLOWING CODE UNLESS YOU KNOW WHAT YOU ARE DOING.
 
+func encodeMapToURLString(data map[string]string) string {
+	values := url.Values{}
+	for key, value := range data {
+		values.Add(key, value)
+	}
+
+	return values.Encode()
+}
+
 func (s *Gitlab) Update(values ...string) error {
 	sv := reflect.ValueOf(*s)
 	st := reflect.TypeOf(*s)
@@ -97,8 +168,33 @@ func (s *Gitlab) Update(values ...string) error {
 	return nil
 }
 
+func main() {
+	params := map[string]string{
+		"limit": "200",
+	}
+	var respStruct []struct {
+		Type       string `json:"type"`
+		Attributes map[string]struct {
+			Type        string `json:"type"`
+			Label       string `json:"label"`
+			Value       any    `json:"value"`
+			UniversalId string `json:"universal_id"`
+		} `json:"attributes"`
+	}
+
+	s := Gitlab{}
+
+	if err := s.apiCall("GET", "project/62", params, nil, &respStruct); err != nil {
+		fmt.Errorf("error while making the api call")
+	}
+
+	for _, x := range respStruct {
+		fmt.Sprintf(x.Type)
+	}
+}
+
 // Init attaches the methods of the Gitlab to the respective handlers.
-func (s *Gitlab) Init() error {
+/*func (s *Gitlab) Init() error {
 	// METHODS
 
 	s.GetHub("connectGitlabInstance").Handle(bitnode.NewNativeFunction(func(creds bitnode.Credentials, vals ...bitnode.HubItem) ([]bitnode.HubItem, error) {
@@ -189,4 +285,4 @@ func (s *Gitlab) Init() error {
 	}))
 
 	return nil
-}
+}*/
