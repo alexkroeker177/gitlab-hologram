@@ -22,6 +22,8 @@ type Issue struct {
 
 	// Title description: A string.
 	Title string `json:"title"`
+
+	Id string `json:"id"`
 }
 
 type User struct {
@@ -157,8 +159,9 @@ func encodeMapToURLString(data map[string]string) string {
 }
 
 func main() {
-	params := map[string]string{
-		"description": "Testing the Gitlab API for hologram use",
+	/*params := map[string]string{
+		"title":       "0208 Issue creation with API test",
+		"description": "GITLAB ISSUE WITH API LOL",
 	}
 	var respStruct []struct {
 		Type       string `json:"type"`
@@ -168,27 +171,28 @@ func main() {
 			Value       any    `json:"value"`
 			UniversalId string `json:"universal_id"`
 		} `json:"attributes"`
-	}
+	}*/
 
 	s := Gitlab{}
 
-	/*issue := Issue{
-		Title:       "14.07 Issue creation with API test",
-		Description: "TESTESTTESTTEST",
-	}*/
-	//project := Project{ProjectId: "62"}
-
-	//s.createIssue(issue, project)
-	s.httpClient = &http.Client{}
-
-	if err := s.apiCall("GET", "projects/62", params, nil, &respStruct); err != nil {
-		fmt.Errorf("error while making the api call")
+	issue := Issue{
+		Title:       "087 Issue creation with API test",
+		Description: "Test4",
+		Id:          "15",
 	}
+	project := Project{ProjectId: "62"}
 
-	// Create new issue with API
+	/*s.createIssue(issue, project)*/
+	s.updateIssue(issue, project)
+	/*s.httpClient = &http.Client{}*/
 
-	/*if err := s.apiCall("PUT", "projects/62/issues/15", params, nil, &respStruct); err != nil {
-		fmt.Errorf("error while making post request")
+	/*if err := s.apiCall("GET", "projects/62", params, nil, &respStruct); err != nil {
+	fmt.Errorf("error while making the api call")*/
+
+	// Update Issue
+
+	/*if err := s.apiCall("PUT", "projects/62/issues/18", params, nil, &respStruct); err != nil {
+		err != nil {fmt.Errorf("error while making post request")
 	}*/
 
 }
@@ -223,3 +227,28 @@ func (s *Gitlab) createIssue(issue Issue, project Project) {
 
 }
 
+func (s *Gitlab) updateIssue(issue Issue, project Project) {
+	params := map[string]string{
+		"description": issue.Description,
+		"title":       issue.Title,
+	}
+
+	var respStruct []struct {
+		Type       string `json:"type"`
+		Attributes map[string]struct {
+			Type        string `json:"type"`
+			Label       string `json:"label"`
+			Value       any    `json:"value"`
+			UniversalId string `json:"universal_id"`
+		} `json:"attributes"`
+	}
+
+	call := fmt.Sprintf("projects/%s/issues/%s", project.ProjectId, issue.Id)
+	s.httpClient = &http.Client{} // In Hologram die HTTP Client Erzeugung im Init Cycle stattfinden lassen
+
+	if err := s.apiCall("PUT", call, params, nil, &respStruct); err != nil {
+		fmt.Errorf("Error while trying to create an issue...")
+	}
+	fmt.Printf("Hell Oooo%s", respStruct)
+
+}
